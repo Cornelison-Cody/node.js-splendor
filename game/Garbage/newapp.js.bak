@@ -1,0 +1,113 @@
+// New App
+var gameClass = require('./gameClasses.js');
+
+
+// SERVER SETUP
+var express = require('express');
+var app = express();
+var serv = require('http').Server(app);
+var path = require('path');
+
+// MVC MODEL PARTS
+// var controler = require('./server/js/controler');
+
+// WEB-SERVER ONLY ALLOWS ./CLIENT FOLDER
+app.get('/' ,function(req, res) {
+    res.sendFile(__dirname + '/client/index.html');
+});
+
+app.use(express.static(path.join(__dirname, 'client')));
+
+// PORT TO START SERVER ON
+serv.listen(2644);
+console.log("Beta server started.");
+
+
+var SOCKET_COUNT = 0;
+var SOCKET_LIST = {};
+// var deck = require('./client/deck1.json');
+//console.log(deck)
+//console.log("An object in the deck" + deck.length)
+var splendor = new gameClass.game();
+
+var sendCard = function (card, index) {
+    for (var i in SOCKET_LIST) {
+        var socket = SOCKET_LIST[i];
+        socket.emit('newCard', card, index);
+    }
+};
+
+var sendPlayer = function (playerName, isFirst) {
+    for (var i in SOCKET_LIST) {
+        var index = 0;
+        var socket = SOCKET_LIST[i];
+        if (isFirst) {
+            socket.emit('newPlayer', splendor.playerList[socket.id].name, index, isFirst);
+            index++;
+        }
+        if (playerName != splendor.playerList[socket.id].name) {
+            socket.emit('newPlayer', playerName, index, isFirst);
+            index++;
+        }
+    }
+};
+
+var sendToken = function (color, count) {
+    var data = {
+        color: color
+        , count: count
+    };
+
+    for (var i in SOCKET_LIST) {
+        var socket = SOCKET_LIST[i];
+        socket.emit('token', data);
+    }
+};
+
+var io = require('socket.io') (serv,{});
+io.sockets.on('connection', function (socket) {
+    socket.id = SOCKET_COUNT++;
+    SOCKET_LIST[socket.id] = socket;
+
+    socket.on('startGame', function() {
+        for (var i in splendor.inPlay) {
+            sendCard(splendor.inPlay[i], (i % 4) );
+        }
+        var isFirst = true;
+        for (var i in splendor.playerList) {
+            sendPlayer(splendor.playerList[i].name, isFirst);
+            isFirst = false;
+        }
+        for (var i in splendor.token) {
+            sendToken(i, splendor.token[i]);
+        }
+    });
+    
+    socket.on('disconnect', function () {
+        delete SOCKET_LIST[socket.id];
+        // delete game.play
+    });
+
+    socket.on('signIn', function (data) {
+        socket.emit('signInResponse');
+        socket.name = data.username;
+        splendor.playerList[socket.id] = new gameClass.player(socket.name);
+        /*console.log("current players: ");
+        for (var i in splendor.playerList) {
+            console.log(splendor.playerList[i].name);
+        }*/ // console log player names
+    });
+
+    socket.on('cardClicked', function (data) {
+        if(splendor.playerList[socket.id].isActivePlayer) {
+            if (splendor.playerList[socket.id].canAfford(splendor.deck[data.cardLvl][data.cardId])) {
+                splendor.buyCards(splendor.playerList[socket.id], data.cardLvl, data.cardId);
+            }
+        } else {
+            //do nothing
+        }
+    });
+
+    <!-- All scripts need to go in here with the socket.on or socket.emit -->
+
+});

@@ -1,0 +1,71 @@
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var consoleDiv, button, socket = io();
+    socket.on('program', function (data) {
+        console.log(data);
+    })
+    socket.on('stdout', function (data) {
+//        console.log("stdout:")
+//        console.log(data.toString())
+        var element = document.createElement('stdout')
+        element.innerHTML = data.toString()
+        consoleDiv.appendChild(element)
+    })
+    socket.on('stderr', function (data) {
+//        console.log("stderr:")
+//        console.log(data.toString())
+        var element = document.createElement('stderr')
+        element.innerHTML = data.toString()
+        consoleDiv.appendChild(element)
+    })
+    socket.on('close', function (data) {
+//        console.log("closed:")
+//        console.log(data)
+        var element = document.createElement('close')
+        element.innerHTML = "close: " + data.toString()
+        consoleDiv.appendChild(element)
+    })
+
+    function startSplendor() {
+        socket.emit('Start Splendor')
+    }
+
+    function KillSplendor() {
+        socket.emit('Kill Splendor')
+    }
+    
+    function rebootServer() {
+        socket.emit('Restart Console')
+        var countdown = 11
+            , reloadInterval = setInterval(function(){
+                var element = document.createElement('stderr')
+                element.innerHTML = "Reboot in: " + --countdown
+                consoleDiv.appendChild(element)
+                if(countdown <= 0){
+                    location.reload();
+                    clearInterval(reloadInterval)
+                }
+            },1000)
+    }
+</script>
+
+<head>
+    <link type="text/css" rel="stylesheet" href="./css.css">
+    <title>Server Management</title>
+</head>
+<main>
+    <div class="consoleDiv">
+        <div class="console" id='console'></div>
+    </div>
+    <div class="controls">
+        <button onclick="startSplendor()">Start Game Server</button>
+        <button onclick="KillSplendor()">Kill Game Server</button>
+        <button onclick="rebootServer()">Reboot Console</button>
+    </div>
+</main>
+<script>
+    consoleDiv = document.getElementById("console")
+    button = document.getElementsByTagName("button")[0]
+</script>
+<style>
+</style>
