@@ -1,0 +1,22 @@
+<script>
+    
+    function test() {
+        this.unique = 8;
+        this.other = 10;
+        var unique2 = 666
+        this.test1 = unique2
+        unique2 = 83838383
+    }
+
+    var obj = {}
+    var obj2 = {}
+    var var1 = "game1"
+    var var2 = "game2"
+    obj[var1] = new test();
+    obj2.game = obj[var1]
+    console.log(obj)
+    console.log(obj2)
+    console.log("Changing values on obj1.game1")
+    obj.game1
+
+</script>
