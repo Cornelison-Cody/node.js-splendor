@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Atg Beta</title>
+        <link rel="stylesheet" type="text/css" href="./css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="./css/main.css">
+
+    </head>
+
+    <body>
+
+    <main>
+        <player id="player1">
+            <div>
+                <points>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </points>
+                <held>
+                    <card></card>
+                    <card></card>
+                    <card></card>
+                </held>
+            </div>
+        </player>
+        <player id="player2">
+            <div>
+                <points>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </points>
+                <held>
+                    <card></card>
+                    <card></card>
+                    <card></card>
+                </held>
+            </div>
+        </player>
+        <player id="player3">
+            <div>
+                <points>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </points>
+                <held>
+                    <card></card>
+                    <card></card>
+                    <card></card>
+                </held>
+            </div>
+        </player>
+        <player id="player4">
+            <div>
+                <points>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </points>
+                <held>
+                    <card></card>
+                    <card></card>
+                    <card></card>
+                </held>
+            </div>
+        </player>
+        <tabletop>
+            <div>
+                <deck></deck>
+                <playArea></playArea>
+                <nobles>
+                    <card>
+                        <type>
+                            <!--<img src="assets/ruby.png">-->
+                        </type>
+                        <victory>3</victory>
+                        <picture></picture>
+                        <flavor></flavor>
+                        <price></price>
+                    </card>
+                </nobles>
+            </div>
+        </tabletop>
+    </main>
+
+    </body>
+
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="js/model.js"></script>    <!-- Base script to start connections with Node.JS -->
+    <script>
+
+        var socket = io();
+
+    </script>
+
+    <!-- Start of scripts to draw out the page -->
+
+</html>
